@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nguyên 💖 Ngọc</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: hotpink;
+      font-size: 2rem;
+      text-align: center;
+      flex-direction: column;
+      animation: fadeIn 2s;
+    }
+
+    .msg {
+      opacity: 0;
+      animation: fade 1s ease-in-out forwards;
+    }
+
+    @keyframes fade {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    #password-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    input[type="password"] {
+      padding: 10px;
+      font-size: 1rem;
+      margin-top: 10px;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+<div id="password-overlay">
+  <h2>Nhập mật khẩu để xem:</h2>
+  <input type="password" id="pw" placeholder="Mật khẩu là gì nè?">
+</div>
+
+<canvas id="starfield"></canvas>
+<div id="content" style="display:none;">
+  <div class="msg" id="msg"></div>
+</div>
+
+<audio autoplay loop>
+  <source src="nhac.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const correctPassword = "ngocyeu";
+  document.getElementById("pw").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+      if (this.value === correctPassword) {
+        document.getElementById("password-overlay").style.display = "none";
+        document.getElementById("content").style.display = "flex";
+        showMessages();
+      } else {
+        alert("Sai mật khẩu rồi 😢");
+      }
+    }
+  });
+
+  const messages = [
+    "Nguyên yêu Ngọc lắm aaa",
+    "Nguyên chỉ cần Ngọc thoi aaa",
+    "Vợ ơi Nguyên yêu vợ aaa",
+    "Mãi bên nhau vợ nháaa",
+    "Yêu vợ nhiều aaa",
+    "Nguyên nhớ vợ ròiii",
+    "Cảm ơn Ngọc đã đến với cuộc đời Nguyên",
+    "Nguyên sẽ cưới Ngọc ạaa 💖❤️💗"
+  ];
+
+  let i = 0;
+  function showMessages() {
+    const msgDiv = document.getElementById("msg");
+    setInterval(() => {
+      msgDiv.style.opacity = 0;
+      setTimeout(() => {
+        msgDiv.innerText = messages[i % messages.length];
+        msgDiv.style.opacity = 1;
+        i++;
+      }, 500);
+    }, 3000);
+  }
+
+  // Star background
+  const canvas = document.getElementById('starfield');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  let stars = [];
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  function createStars() {
+    stars = [];
+    for (let i = 0; i < 150; i++) {
+      stars.push({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        z: Math.random() * w
+      });
+    }
+  }
+
+  function drawStars() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, w, h);
+    for (let i = 0; i < stars.length; i++) {
+      let star = stars[i];
+      star.z -= 2;
+      if (star.z <= 0) {
+        star.z = w;
+      }
+      let k = 128.0 / star.z;
+      let px = star.x * k + w / 2;
+      let py = star.y * k + h / 2;
+      if (px >= 0 && px <= w && py >= 0 && py <= h) {
+        let size = (1 - star.z / w) * 3;
+        ctx.fillStyle = 'white';
+        ctx.beginPath();
+        ctx.arc(px, py, size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  function animate() {
+    drawStars();
+    requestAnimationFrame(animate);
+  }
+
+  createStars();
+  animate();
+</script>
+</body>
+</html>
